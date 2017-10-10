@@ -1,12 +1,20 @@
 # Button Based Delay
-Now that you have begun to familiarize yourself with the TIMER modules, why don't we make an interesting change to our code from the last lab.
+## description
+Applicable for code written for the following dev boards:
+* FR5994
+* FR2311
+* F5529
+* G2553
+* FR6989
 
-## Task
-Setup your microcontroller to initially blink and LED at a rate of 10Hz upon restarting or powering up. Then utilizing one of the buttons on board, a user should be able to set the delay or blinking rate of the LED by holding down a button. The duration in which the button is depressed should then become the new rate at which the LED blinks. As previously stated, you most likely will want to take advantage of the fact that TIMER modules exist and see if you can let them do a bulk of the work for you.
+The code uses timers and the dev board buttons to control the speed of a blinking led. all the boards start with a default blink frequency of 10Hz. Once the button is pressed a timer is used to to keep track of how long the button was pressed. Then that number of overflows and the TAR0 register value is used to determine the amount of time before the LED state is toggled again.
 
-### Extra Work
-## Reset Button
-What is a piece of electronics without a reset button? Instead of relying on resetting your processor using the built in reset circuitry, why not instead use another button to reset the rate back to 10Hz.
+## Similarities 
+All the code is structurally the same. They have a few vairables to keep track of the TAR0 reg when the button is first pressed and another to keep track of the TAR0 reg when the button is let go. another variable is used to keep track of the number of overflows in the timer. All of this information is then unsed in the timer ISR that controls the led output state.
 
-## Button Based Hertz
-Most likely using two buttons, what if instead of making a delay loop based on the time, the user could instead enter a mode where the number of times they pressed the button would become the number in Hz of the blinking rate? How do you think you would implement that with just one button?
+Debouncing was also used to be sure the timing was not incorect from erronous interrupts
+
+## Differences
+One of the main differences is that the FR boards require and extra line of code "PM5CTL0 &= ~LOCKLPM5;" to adjust the power settings in order to be able to adjust the P1 registers. Another difference is the timers used. The FR2311 for example does not have a timer A.
+
+## EXTRA WORK
