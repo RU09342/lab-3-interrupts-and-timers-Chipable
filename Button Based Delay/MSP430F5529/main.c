@@ -26,10 +26,19 @@ int main(void){
     P2REN |= (1<<1);    // Enables pull up resistor on P1.1
     P2OUT |= (1<<1);    // Sets pull up to VCC
 
+    P1DIR &= ~(1<<1);   // SETS P1.1 as an input
+    P1REN |= (1<<1);    // Enables pull up resistor on P1.1
+    P1OUT |= (1<<1);    // Sets pull up to VCC
+
     /* INTERRUPT INIT */
     P2IE |= BIT1;
     P2IES |= BIT1;      //interrupt on posedge
     P2IFG &= ~BIT1;
+
+    /* INTERRUPT INIT FOR RESET*/
+    P1IE |= BIT1;
+    P1IES &= ~BIT1;      //interrupt on NEGEDGE
+    P1IFG &= ~BIT1;
 
     TA0CTL= ( MC__UP  + TASSEL__SMCLK + ID__8);             //up timer, Aclk, div 8
 
@@ -65,7 +74,7 @@ __interrupt void Timer1_A1_ISR (void){
     TA1CCTL1&=~BIT0;    //clears flags
 }
 #pragma vector=PORT2_VECTOR
-__interrupt void Port_1(void){
+__interrupt void Port_2(void){
     /* DEBOUNCE AND WAIT FLIP EDGE TRIGGER */
     P2IE &= ~BIT1;
     _delay_cycles(50000);
@@ -89,4 +98,15 @@ __interrupt void Port_1(void){
     }
 
     P2IFG &= ~BIT1;         // resets flag
+}
+#pragma vector=PORT1_VECTOR
+__interrupt void Port_1(void){
+    P1IE &= ~BIT1;
+    _delay_cycles(50000);
+    P1IE |= BIT1;               //re-enable interrupt
+
+    TA0CCR1 = 6250;
+    lap_goal = 0;
+
+    P1IFG &= ~BIT1;         // resets flag
 }

@@ -18,3 +18,7 @@ Debouncing was also used to be sure the timing was not incorect from erronous in
 One of the main differences is that the FR boards require and extra line of code "PM5CTL0 &= ~LOCKLPM5;" to adjust the power settings in order to be able to adjust the P1 registers. Another difference is the timers used. The FR2311 for example does not have a timer A.
 
 ## EXTRA WORK
+F5529
+a reset button was implemented to set the blinking led back to 10Hz
+
+another interrupt was added to reset the number of wrap arounds and the TACCR1 register
